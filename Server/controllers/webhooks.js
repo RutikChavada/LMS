@@ -3,6 +3,8 @@ import User from "../models/User.js";
 
 export const clerkwebhooks = async (req, res) => {
     try{
+        console.log("✅ Clerk webhook received");
+    console.log("📦 Payload:", req.body);
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
         await whook.verify(JSON.stringify(req.body),{
             "svix-id":req.headers['svix-id'],
