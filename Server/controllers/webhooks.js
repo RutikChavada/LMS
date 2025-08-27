@@ -72,7 +72,7 @@ export const stripeWebhooks = async (request,response) => {
 
   switch(event.type){
     case 'payment_intent.succeeded':{
-      console.log("this portion is working !")
+      // console.log("this portion is working !")
       const paymentIntent = event.data.object;
       const paymentIntentId = paymentIntent.id;
       const session = await stripeInstance.checkout.sessions.list({
