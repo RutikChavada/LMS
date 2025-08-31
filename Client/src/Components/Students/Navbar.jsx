@@ -3,13 +3,34 @@ import { assets } from "../../assets/assets";
 import { Link } from "react-router-dom";
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
 import { AppContext } from "../../context/ContextApp";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 function Navbar() {
     const isCourseListPage = location.pathname.includes("/course-list");
     const { openSignIn } = useClerk();
     const { user } = useUser();
 
-    const{navigate,isEducator} = useContext(AppContext)
+    const becomeEducator = async () => {
+        try {
+            if(isEducator){
+                navigate('/educator');
+                return;
+            }
+            const token = await getToken();
+            const{data} = await axios.get(backendURL + '/api/educator/update-role',{headers: {Authorization: `Bearer ${token}`}})
+            if(data.success){
+                setIsEducator(true);
+                toast.success(data.message);
+            }else{
+                toast.success(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const{navigate,isEducator,backendURL,setIsEducator,getToken} = useContext(AppContext)
 
     return (
         <div
@@ -25,7 +46,7 @@ function Navbar() {
             {/* <p className="w-28 lg:w-32 cursor-pointer">Logo</p> */}
             <div className="hidden md:flex items-center gap-5 text-gray-500">
                 <div className="flex items-center gap-5 cursor-pointer">
-                    {user && <><button onClick={() => {navigate("/educator")}}>{isEducator ? "Educator Dashboard" : "Become Educator"}</button>|
+                    {user && <><button onClick={becomeEducator}>{isEducator ? "Educator Dashboard" : "Become Educator"}</button>|
                         <Link to="/my-enrollments">My Enrollments</Link></>}
                 </div>
                 {user ? <UserButton /> :
@@ -38,7 +59,7 @@ function Navbar() {
             </div>
             <div className="md:hidden flex items-center gap-2 sm:gap-5 text-gray-500">
                 <div className="flex items-center gap-1 sm:gap-2 max-sm:text-xs cursor-pointer">
-                    {user && <><button onClick={() => {navigate("/educator")}}>{isEducator ? "Educator Dashboard" : "Become Educator"}</button>|
+                    {user && <><button onClick={becomeEducator}>{isEducator ? "Educator Dashboard" : "Become Educator"}</button>|
                 <Link to="/my-enrollments">My Enrollments</Link></>}
                 </div>
                 {

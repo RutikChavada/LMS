@@ -130,7 +130,7 @@ export const addUserRating = async (req,res) => {
 
         const user = await User.findById(userId)
 
-        if(!user || user.enrolledCourses.includes(courseId)){
+        if(!user || !user.enrolledCourses.includes(courseId)){
             return res.json({success: false,message: 'Course Not Purchase by user'})
         }
 
